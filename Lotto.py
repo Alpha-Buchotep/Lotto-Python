@@ -1,16 +1,14 @@
-# --------------------------------------
-#|  Python - Egyszerű lottó sorsoló     |
-#|  By C2H5Cl                           |
-#|  Fájl: Lotto.py                      |
-#|--------------------------------------|
-#|  Tesztelve: Python 3.10.10 verzióval |
-# --------------------------------------
+# ---------------------------------------
+#|  Python - Egyszerű lottó sorsoló      |
+#|---------------------------------------|
+#|  Tesztelve: Python 3.10.106 verzióval |
+# ---------------------------------------
 
 #------------------------------------
 # Importok
 #------------------------------------
 
-# OS modul import (képernyőtörlés, ablaak fejlécének szövege stb.)
+# OS modul import (képernyőtörlés, ablak fejlécének szövege stb.)
 import os
 
 # JSON modul import (JSON adatok kezeléséhez)
@@ -39,17 +37,6 @@ lottoEuroJ = '{ "nev":"EuroJackpot", "jatekMezokSzama":2, "minSzam":1, "maxSzam"
 
 #-------------------------------------------------------------------
 # Egyéb globális változók
-#
-# int = Integer > bármilyen egész számot tároló változó
-# str = string > bármilyen alfanumerikus karaktert tároló változó
-# float = bármilyen nem egész számot tároló változó
-#
-# Példák:
-#
-# int(60)
-# str("Szöveg")
-# float(3.14)
-#-------------------------------------------------------------------
 
 szelvenyekSzama = int(2)
 fajlMentes = str("n")
@@ -80,9 +67,9 @@ print(" |  --------------------------------------  |")
 print(" |                                          |")
 print("  ------------------------------------------ ")
 
-#-------------------------------------------------------------
+#----------------------------------------------------
 # Adatok bekérése függvény
-#-------------------------------------------------------------
+#----------------------------------------------------
 
 def adatokBekerese():
 
@@ -118,9 +105,11 @@ def adatokBekerese():
 	print(" |------------------------------------------|")
 	print(" | 2 | Hatos lottó  | 1 mezős               |")
 	print(" |------------------------------------------|")
-	print(" | 3 | Hetes lottó  | 2 mezős (kézi/gépi)   |")
+	print(" | 3 | Hetes lottó  | 1 mezős (kézi/gépi)   |")
 	print(" |------------------------------------------|")
 	print(" | 4 | EuroJackpot  | 2 mezős (A/B mező)    |")
+	print(" |------------------------------------------|")
+	print(" | S | Szabályok    |                       |")
 	print(" |------------------------------------------|")
 	print(" | X | Kilépés      |                       |")
 	print("  ------------------------------------------ ")
@@ -132,11 +121,17 @@ def adatokBekerese():
 	#-------------------------------------------------------------
 
 	print("")
-	lottoValasztas = input(" Melyik lottót húzzam? (1/2/3/4, alap: 1) | ")
+	lottoValasztas = str(input(" Melyik lottót húzzam? (1/2/3/4, alap: 1) | "))
 
 	# Csak Enter-t nyomtunk, 5-s lottó
 	if lottoValasztas == "":
 		lottoValasztas = 1
+
+	# S-t nyomtunk, jatekSzabalyok() függvény meghívása
+	elif lottoValasztas.upper() == "S":
+		jatekSzabalyok()
+		tmpValasztas = str(input(" Nyomj Enter-t a folytatáshoz"))
+		adatokBekerese()
 
 	# X-t nyomtunk, viszlat() függvény meghívása
 	elif lottoValasztas.upper() == "X":
@@ -178,7 +173,7 @@ def adatokBekerese():
 	#---------------------------------------------------------------
 
 	print("")
-	huzandoSzelvenyekSzama = input(" Hány darab szelvényt húzzak? (max. 3600 db, alap: 2) | ")
+	huzandoSzelvenyekSzama = str(input(" Hány darab szelvényt húzzak? (max. 3600 db, alap: 2) | "))
 	
 	#-------------------------------------------------------------------
 	# Ha Enter-t nyomtunk, akkor alapértlmezetten 2 db szelvényt húzunk
@@ -254,7 +249,7 @@ def adatokBekerese():
 
 
 	#-------------------------------------------------------------------
-	# Felhasználói választás > legyen-e váakozás a számsorolások között
+	# Felhasználói választás > legyen-e várakozás a számsorolások között
 	#-------------------------------------------------------------------
 
 	print("")
@@ -311,68 +306,62 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 	sorsolandoSzamok = 0
 	jatekMezok = 0
 
-	# ----------------------------------------------------------------------------------------------
-	# Sok if / elif / else vizsgálat helyett használhatjuk a match / case (Python 3.10.0 vagy újabb)
-	# vizsgálatot is, természetesen bármelyik használható (if / elif  else vagy match / case)
-	# ----------------------------------------------------------------------------------------------
-
 	#----------------------------------------------------------------------------
 	# Az alábbi vizsgálattal döntjük el, melyik lottó JSON adatait kell betölteni
 	# a lottoSorsolas függvény lottoTipus paramétere alapján
 	#----------------------------------------------------------------------------
 
-	match lottoTipus:
 	# Ötös lottó
-		case 1:
-			tmpLottoAdatok = json.loads(lottoOtos)
-			lottoNev = tmpLottoAdatok["nev"]
-			jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
-			kezdoSzam = tmpLottoAdatok["minSzam"]
-			vegeSzam = tmpLottoAdatok["maxSzam"]
-			sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
+	if lottoTipus == 1:
+		tmpLottoAdatok = json.loads(lottoOtos)
+		lottoNev = tmpLottoAdatok["nev"]
+		jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
+		kezdoSzam = tmpLottoAdatok["minSzam"]
+		vegeSzam = tmpLottoAdatok["maxSzam"]
+		sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
 
-		# Hatos lottó
-		case 2:
-			tmpLottoAdatok = json.loads(lottoHatos)
-			lottoNev = tmpLottoAdatok["nev"]
-			jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
-			kezdoSzam = tmpLottoAdatok["minSzam"]
-			vegeSzam = tmpLottoAdatok["maxSzam"]
-			sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
+	# Hatos lottó
+	elif lottoTipus == 2:
+		tmpLottoAdatok = json.loads(lottoHatos)
+		lottoNev = tmpLottoAdatok["nev"]
+		jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
+		kezdoSzam = tmpLottoAdatok["minSzam"]
+		vegeSzam = tmpLottoAdatok["maxSzam"]
+		sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
 
-		# Hetes (Skandináv) lottó
-		case 3:
-			tmpLottoAdatok = json.loads(lottoHetes)
-			lottoNev = tmpLottoAdatok["nev"]
-			jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
-			kezdoSzam = tmpLottoAdatok["minSzam"]
-			vegeSzam = tmpLottoAdatok["maxSzam"]
-			sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
-			#-----------------------------------------------
-			kezdoSzamB = tmpLottoAdatok["minSzamB"]
-			vegeSzamB = tmpLottoAdatok["maxSzamB"]
-			sorsolandoSzamokB = tmpLottoAdatok["huzandoSzamokB"]
+	# Hetes (Skandináv) lottó
+	elif lottoTipus == 3:
+		tmpLottoAdatok = json.loads(lottoHetes)
+		lottoNev = tmpLottoAdatok["nev"]
+		jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
+		kezdoSzam = tmpLottoAdatok["minSzam"]
+		vegeSzam = tmpLottoAdatok["maxSzam"]
+		sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
+		#-----------------------------------------------
+		kezdoSzamB = tmpLottoAdatok["minSzamB"]
+		vegeSzamB = tmpLottoAdatok["maxSzamB"]
+		sorsolandoSzamokB = tmpLottoAdatok["huzandoSzamokB"]
 
-		# Euro Jackpot
-		case 4:
-			tmpLottoAdatok = json.loads(lottoEuroJ)
-			lottoNev = tmpLottoAdatok["nev"]
-			jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
-			kezdoSzam = tmpLottoAdatok["minSzam"]
-			vegeSzam = tmpLottoAdatok["maxSzam"]
-			sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
-			#-----------------------------------------------
-			kezdoSzamB = tmpLottoAdatok["minSzamB"]
-			vegeSzamB = tmpLottoAdatok["maxSzamB"]
-			sorsolandoSzamokB = tmpLottoAdatok["huzandoSzamokB"]
+	# EuroJackpot
+	elif lottoTipus == 4:
+		tmpLottoAdatok = json.loads(lottoEuroJ)
+		lottoNev = tmpLottoAdatok["nev"]
+		jatekMezok = tmpLottoAdatok["jatekMezokSzama"]
+		kezdoSzam = tmpLottoAdatok["minSzam"]
+		vegeSzam = tmpLottoAdatok["maxSzam"]
+		sorsolandoSzamok = tmpLottoAdatok["huzandoSzamok"]
+		#-----------------------------------------------
+		kezdoSzamB = tmpLottoAdatok["minSzamB"]
+		vegeSzamB = tmpLottoAdatok["maxSzamB"]
+		sorsolandoSzamokB = tmpLottoAdatok["huzandoSzamokB"]
 
-		case other:
-			print(" -------------------------------------------")
-			print(" Nem megfelelő lottő típus! ")
-			print(" -------------------------------------------")
-			print("")
-			exit()
-
+	# A lehetséges lottók közül egyik sem
+	else:
+		print(" -------------------------------------------")
+		print(" Nem megfelelő lottő típus! ")
+		print(" -------------------------------------------")
+		print("")
+		exit()
 
 	# -------------------------------------
 	# Jelenlegi dátum / idő beszippantása
@@ -386,16 +375,6 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 
 	print("")
 	print(" A(z) " + lottoNev + " sorsolás elindult: " + str(datum.strftime("%Y.%m.%d %H:%M:%S")) + " - " + str(szelvenyekSzama) + " db szelvény lesz kisorsolva.")
-	print("")
-
-
-	#------------------------------------
-	# Kiírjuk a választott lottó nevét
-	#------------------------------------
-
-	print(" -------------------------------------------")
-	print(" A(z) " + lottoNev + " nyerőszámai")
-	print(" -------------------------------------------")
 	print("")
 
 	#--------------------------------------------------------------------
@@ -645,6 +624,50 @@ def viszlat():
 # Kilépés függvény vége
 #-------------------------------------------------------------
 
+
+#-------------------------------------------------------------
+# Játékszabályok függvény
+#-------------------------------------------------------------
+
+def jatekSzabalyok():
+
+	#-------------------------------------
+	# Képernyő törlése
+	#-------------------------------------
+
+	os.system("cls")
+
+	print("")
+	print(" ----------------")
+	print(" Ötös lottó")
+	print(" ----------------")
+	print("")
+	print(" Egy mezős játék, 5 számot kell sorsolni 1-90 közötti tartományból.")
+	print("")
+	print(" ----------------")
+	print(" Hatos lottó")
+	print(" ----------------")
+	print("")
+	print(" Egy mezős játék, 6 számot kell sorsolni 1-45 közötti tartományból.")
+	print("")
+	print(" ----------------")
+	print(" Hetes lottó")
+	print(" ----------------")
+	print("")
+	print(" Egy mezős játék, de kézi és gépi sorsolás is van.")
+	print(" 7 számot kell sorsolni 1-35 közötti tartományból.")
+	print("")
+	print(" ----------------")
+	print(" EuroJackpot")
+	print(" ----------------")
+	print("")
+	print(" Két mezős játék, A és B mező.")
+	print(" Az A mezőben 5 számot kell sorsolni 1-50 közötti tartományból, a B mezőben pedig 2 számot kell sorsolni 1-12 közötti tartományból.")
+	print("")
+
+#-------------------------------------------------------------
+# Játékszabályok függvény vége
+#-------------------------------------------------------------
 
 #-------------------------------------------------------------
 # Adatok bekérése függvény meghívása > program indítása
