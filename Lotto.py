@@ -130,7 +130,7 @@ def adatokBekerese():
 	# S-t nyomtunk, jatekSzabalyok() függvény meghívása
 	elif lottoValasztas.upper() == "S":
 		jatekSzabalyok()
-		tmpValasztas = str(input(" Nyomj Enter-t a folytatáshoz"))
+		input(" Nyomj Enter-t a folytatáshoz")
 		adatokBekerese()
 
 	# X-t nyomtunk, viszlat() függvény meghívása
