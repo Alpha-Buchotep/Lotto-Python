@@ -8,6 +8,9 @@
 # Importok
 #------------------------------------
 
+# SYS modul import
+import sys
+
 # OS modul import (képernyőtörlés, ablak fejlécének szövege stb.)
 import os
 
@@ -37,6 +40,7 @@ lottoEuroJ = '{ "nev":"EuroJackpot", "jatekMezokSzama":2, "minSzam":1, "maxSzam"
 
 #-------------------------------------------------------------------
 # Egyéb globális változók
+#-------------------------------------------------------------------
 
 szelvenyekSzama = int(2)
 fajlMentes = str("n")
@@ -59,9 +63,7 @@ print(" |  --------------------------------------  |")
 print(" | |                                      | |")
 print(" | | Python - Egyszerű lottó sorsoló      | |")
 print(" | |                                      | |")
-print(" | | Fájl: Lotto.py                       | |")
-print(" | |                                      | |")
-print(" | | Tesztelve: Python 3.10.10 verzióval  | |")
+print(" | | Készítette: C2H5Cl                   | |")
 print(" | |                                      | |")
 print(" |  --------------------------------------  |")
 print(" |                                          |")
@@ -128,13 +130,13 @@ def adatokBekerese():
 		lottoValasztas = 1
 
 	# S-t nyomtunk, jatekSzabalyok() függvény meghívása
-	elif lottoValasztas.upper() == "S":
+	elif lottoValasztas.lower() == "s":
 		jatekSzabalyok()
 		input(" Nyomj Enter-t a folytatáshoz")
 		adatokBekerese()
 
 	# X-t nyomtunk, viszlat() függvény meghívása
-	elif lottoValasztas.upper() == "X":
+	elif lottoValasztas.lower() == "x":
 		viszlat()
 
 	else:
@@ -166,7 +168,7 @@ def adatokBekerese():
 		print("")
 		print(" Nem megfelelő lottót választottál!")
 		print("")
-		exit()
+		sys.exit()
 
 	#---------------------------------------------------------------
 	# Megkérdezzük a felhasználót, hány szelvényt szeretne sorsolni
@@ -216,7 +218,7 @@ def adatokBekerese():
 	# a felhasználótól az elválasztó karaktert
 	#-------------------------------------------------
 
-	if fajlMentes.upper() == "I":
+	if fajlMentes.lower() == "i":
 
 		#-------------------------------------------------------------
 		# Elválasztó karakter bekérése
@@ -244,9 +246,8 @@ def adatokBekerese():
 		# Ha nem I vagy i betűt írtunk be, szamokMentese = "n"
 		#------------------------------------------------------
 
-	elif fajlMentes.upper() != "I":
+	else:
 		fajlMentes = "n"
-
 
 	#-------------------------------------------------------------------
 	# Felhasználói választás > legyen-e várakozás a számsorolások között
@@ -255,18 +256,34 @@ def adatokBekerese():
 	print("")
 	varakozas = str(input(" Legyen minimális várakozás a sorsolások között? (I/i = igen, bármi más érték vagy Enter esetén nincs, alap: nincs) | "))
 
-	if varakozas.upper() == "":
-		varakozas = "N"
-	elif varakozas.upper() == "I":
-		varakozas = "I"
+	if varakozas.lower() == "i":
+
+		varakozas = "i"
+
+		#-------------------------------------------------------------------------
+		# Felhasználói választás a várakozás idejéről (0.1 - 5.0 másodperc között
+		#-------------------------------------------------------------------------
+
+		print("")
+		varakozasiIdo = str(input(" Mennyi időt várjunk a számok sorsolása között? (min.: 0.1 mp, max.: 5 mp, alap: 0.5 mp) | "))
+
+		if varakozasiIdo == "":
+			varakozasiIdo = float(0.5)
+		else:
+			try:
+				varakozasiIdo = float(varakozasiIdo)
+			except:
+				varakozasiIdo = float(0.5)
+	
 	else:
-		varakozas = "N"
+		varakozas = "n"
+		varakozasiIdo = 0
 
 	#-------------------------------------------------------------
 	# A kapott adatok alapján meghívjuk a lottoSorsolas függvényt
 	#-------------------------------------------------------------
 
-	lottoSorsolas(lottoValasztas, varakozas)
+	lottoSorsolas(lottoValasztas, varakozas, varakozasiIdo)
 
 #-------------------------------------------------------------
 # Adatok bekérése függvény vége
@@ -276,7 +293,7 @@ def adatokBekerese():
 # Sorsolás függvény > alapértelmezett értékekkel megadva
 #-------------------------------------------------------------
 
-def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
+def lottoSorsolas(lottoTipus = 1, varakozas = "n", varakozasiIdo = 0.5):
 
 	# Beállítjuk az ablak fejlécét
 	os.system("title Python Lottó - Sorsolás folyamatban")
@@ -361,7 +378,7 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 		print(" Nem megfelelő lottő típus! ")
 		print(" -------------------------------------------")
 		print("")
-		exit()
+		sys.exit()
 
 	# -------------------------------------
 	# Jelenlegi dátum / idő beszippantása
@@ -375,6 +392,15 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 
 	print("")
 	print(" A(z) " + lottoNev + " sorsolás elindult: " + str(datum.strftime("%Y.%m.%d %H:%M:%S")) + " - " + str(szelvenyekSzama) + " db szelvény lesz kisorsolva.")
+	print("")
+
+	#------------------------------------
+	# Kiírjuk a választott lottó nevét
+	#------------------------------------
+
+	print(" -------------------------------------------")
+	print(" A(z) " + lottoNev + " nyerőszámai")
+	print(" -------------------------------------------")
 	print("")
 
 	#--------------------------------------------------------------------
@@ -438,8 +464,8 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 			# Amennyiben kértünk várakozást, várunk a számok kiiratása között 500 ms-t
 			#--------------------------------------------------------------------------
 
-			if varakozas == "I":
-				time.sleep(0.5)
+			if varakozas.lower() == "i":
+				time.sleep(varakozasiIdo)
 
 			# Összetesszük a sorsolás számait egy string típusú változóba,
 			# ezt írjuk majd be a fájlba, a megadott vagy alapértelmezett
@@ -503,8 +529,8 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 				# Amennyiben kértünk várakozást, várunk a számok kiiratása között 500 ms-t
 				#--------------------------------------------------------------------------
 
-				if varakozas == "I":
-					time.sleep(0.5)
+				if varakozas.lower() == "i":
+					time.sleep(varakozasiIdo)
 				
 				# Összetesszük a sorsolás számait egy string típusú változóba,
 				# ezt írjuk majd be a fájlba, a megadott vagy alapértelmezett
@@ -515,7 +541,7 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 
 		# Ha kértük a számok fájlba mentését, akkor legeneráljuk a
 		# mentendő fájl nevét a felhasználó home könyvtárába
-		if fajlMentes.upper() == "I":
+		if fajlMentes.lower() == "i":
 
 			# Az utolsó delimiter karaktert eltávolítjuk minden sor végéről
 			tmpLen = len(szamokFajlba) - 1
@@ -556,7 +582,7 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 	# történt-e hiba a mentés során
 	#-------------------------------------------------------------
 	
-	if fajlMentes.upper() == "I":
+	if fajlMentes.lower() == "i":
 
 		#-------------------------------------------------------------
 		# Ha a fajlMentesHiba változó nagyobb 1-nél, az azt jelenti,
@@ -594,7 +620,7 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "N"):
 	sorolasUjra = str(input(" Akarsz újra sorsolni? (I/i = igen, bármi egyéb = nem) | "))
 	print("")
 
-	if sorolasUjra.upper() == "I":
+	if sorolasUjra.lower() == "i":
 		adatokBekerese()
 	else:
 		viszlat()
@@ -618,7 +644,8 @@ def viszlat():
 	print("  ╚████╔╝ ██║███████║███████╗███████╗██║  ██║   ██║   ██╗ ")
 	print("   ╚═══╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ")
 	print("")
-	exit()
+	input("")
+	sys.exit()
 
 #-------------------------------------------------------------
 # Kilépés függvény vége
