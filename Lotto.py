@@ -304,6 +304,9 @@ def lottoSorsolas(lottoTipus = 1, varakozas = "n", varakozasiIdo = 0.5):
 	kezdoSzam = 0
 	vegeSzam = 0
 	sorsolandoSzamok = 0
+	kezdoSzamB = 0
+	vegeSzamB = 0
+	sorsolandoSzamokB = 0
 	jatekMezok = 0
 
 	#----------------------------------------------------------------------------
